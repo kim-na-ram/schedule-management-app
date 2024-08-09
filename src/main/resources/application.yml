@@ -1,0 +1,7 @@
+spring.application.name:
+  schedule-management-app
+
+spring:
+  profiles:
+    active:
+      dev
