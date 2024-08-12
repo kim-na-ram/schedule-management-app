@@ -1,9 +1,6 @@
 package com.bootcamp.schedulemanagementapp.controller;
 
-import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleReqDto;
-import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleRspDto;
-import com.bootcamp.schedulemanagementapp.dto.GetScheduleRspDto;
-import com.bootcamp.schedulemanagementapp.dto.GetSchedulesRspDto;
+import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.service.ScheduleService;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +57,20 @@ public class ScheduleController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("일정 목록 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PatchMapping(SCHEDULE_ID)
+    public ResponseEntity<?> modifySchedule(@PathVariable("scheduleId") long scheduleId, @RequestBody ModifyScheduleReqDto modifyScheduleReqDto) {
+        try {
+            ModifyScheduleRspDto modifyScheduleRspDto = scheduleService.updateByScheduleIdAndPassword(scheduleId, modifyScheduleReqDto);
+            return new ResponseEntity<>(modifyScheduleRspDto, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("일정 수정에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

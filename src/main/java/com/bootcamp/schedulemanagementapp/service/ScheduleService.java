@@ -1,9 +1,6 @@
 package com.bootcamp.schedulemanagementapp.service;
 
-import com.bootcamp.schedulemanagementapp.dto.GetScheduleRspDto;
-import com.bootcamp.schedulemanagementapp.dto.GetSchedulesRspDto;
-import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleReqDto;
-import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleRspDto;
+import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.repository.ScheduleRepository;
 import com.bootcamp.schedulemanagementapp.entity.Schedule;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +17,7 @@ public class ScheduleService {
     public RegisterScheduleRspDto save(RegisterScheduleReqDto registerScheduleReqDto) {
         Schedule savedSchedule;
         try {
-            savedSchedule = scheduleRepository.save(registerScheduleReqDto.dtoToScheduleEntity());
+            savedSchedule = scheduleRepository.save(registerScheduleReqDto.toEntity());
             return new RegisterScheduleRspDto(savedSchedule);
         } catch (Exception e) {
             throw new RuntimeException("일정 등록에 실패하였습니다.");
@@ -42,6 +39,22 @@ public class ScheduleService {
             return new GetSchedulesRspDto(scheduleRepository.findAll());
         } else {
             return new GetSchedulesRspDto(scheduleRepository.findByUpdateDateAndManagerName(updateDate, managerName));
+        }
+    }
+
+    public ModifyScheduleRspDto updateByScheduleIdAndPassword(long scheduleId, ModifyScheduleReqDto modifyScheduleReqDto) {
+        boolean isExistSchedule = scheduleRepository.existsByScheduleId(scheduleId);
+
+        if (!isExistSchedule) {
+           throw new NoSuchElementException("존재하지 않는 일정입니다.");
+        }
+
+        boolean result = scheduleRepository.updateByScheduleIdAndPassword(scheduleId, modifyScheduleReqDto.toEntity());
+        if(result) {
+            return new ModifyScheduleRspDto(scheduleRepository.findByScheduleId(scheduleId)
+                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 일정입니다.")));
+        } else {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
 }

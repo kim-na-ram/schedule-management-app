@@ -96,4 +96,38 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
                         .updateDate(rs.getTimestamp("update_date"))
                         .build(), params.toArray());
     }
+
+    @Override
+    public boolean existsByScheduleId(long scheduleId) {
+        String sql = "SELECT COUNT(*) FROM schedule WHERE schedule_id = ? AND is_deleted = false";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, scheduleId);
+
+        if(result == null) return false;
+        return result > 0;
+    }
+
+    @Override
+    public boolean updateByScheduleIdAndPassword(long scheduleId, Schedule schedule) {
+        String sql = "UPDATE schedule SET update_date = ?";
+        List<Object> params = new ArrayList<>();
+        params.add(schedule.getUpdateDate());
+
+        if (StringUtils.hasText(schedule.getContents())) {
+            sql += ", contents = ?";
+            params.add(schedule.getContents());
+        }
+
+        if (StringUtils.hasText(schedule.getManagerName())) {
+            sql += ", manager_name = ?";
+            params.add(schedule.getManagerName());
+        }
+
+        sql += " WHERE schedule_id = ? AND password = ? AND is_deleted = false";
+        params.add((int) scheduleId);
+        params.add(schedule.getPassword());
+
+        int result = jdbcTemplate.update(sql, params.toArray());
+
+        return result > 0;
+    }
 }

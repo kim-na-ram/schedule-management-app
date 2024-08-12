@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterScheduleReqDto {
+public class ModifyScheduleReqDto {
     private String contents;
     private String managerName;
     private String password;
@@ -20,7 +20,6 @@ public class RegisterScheduleReqDto {
                 .contents(contents)
                 .managerName(managerName)
                 .password(password)
-                .regDate(new Timestamp(System.currentTimeMillis()))
                 .updateDate(new Timestamp(System.currentTimeMillis()))
                 .build();
     }

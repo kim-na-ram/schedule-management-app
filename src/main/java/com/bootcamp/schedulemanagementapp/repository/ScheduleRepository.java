@@ -10,4 +10,6 @@ public interface ScheduleRepository {
     Optional<Schedule> findByScheduleId(long scheduleId);
     List<Schedule> findAll();
     List<Schedule> findByUpdateDateAndManagerName(String updateDate, String managerName);
+    boolean existsByScheduleId(long scheduleId);
+    boolean updateByScheduleIdAndPassword(long scheduleId, Schedule schedule);
 }
