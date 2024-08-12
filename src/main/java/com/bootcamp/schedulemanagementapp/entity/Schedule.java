@@ -1,11 +1,8 @@
 package com.bootcamp.schedulemanagementapp.entity;
 
-import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleRspDto;
 import lombok.*;
 
 import java.sql.Timestamp;
-
-import static com.bootcamp.schedulemanagementapp.utils.Utils.timeStampToStringDate;
 
 @Getter
 @Builder

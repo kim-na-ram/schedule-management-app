@@ -3,6 +3,7 @@ package com.bootcamp.schedulemanagementapp.controller;
 import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleReqDto;
 import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleRspDto;
 import com.bootcamp.schedulemanagementapp.dto.GetScheduleRspDto;
+import com.bootcamp.schedulemanagementapp.dto.GetSchedulesRspDto;
 import com.bootcamp.schedulemanagementapp.service.ScheduleService;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,20 @@ public class ScheduleController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("일정 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllSchedules(@RequestParam(value = "updateDate", required = false) String updateDate,
+                                             @RequestParam(value = "managerName", required = false) String managerName) {
+        try {
+            GetSchedulesRspDto getSchedulesResDto = scheduleService.findAllOrFindByCondition(updateDate, managerName);
+
+            return new ResponseEntity<>(getSchedulesResDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("일정 목록 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
