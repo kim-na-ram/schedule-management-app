@@ -2,6 +2,7 @@ package com.bootcamp.schedulemanagementapp.controller;
 
 import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleReqDto;
 import com.bootcamp.schedulemanagementapp.dto.RegisterScheduleRspDto;
+import com.bootcamp.schedulemanagementapp.dto.GetScheduleRspDto;
 import com.bootcamp.schedulemanagementapp.service.ScheduleService;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.NoSuchElementException;
 
 import static com.bootcamp.schedulemanagementapp.constants.ScheduleApiUrl.*;
 
@@ -29,6 +32,19 @@ public class ScheduleController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(SCHEDULE_ID)
+    public ResponseEntity<?> getSchedule(@PathVariable("scheduleId") long scheduleId) {
+        try {
+            GetScheduleRspDto getScheduleRspDto = scheduleService.findByScheduleId(scheduleId);
+
+            return new ResponseEntity<>(getScheduleRspDto, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("일정 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
