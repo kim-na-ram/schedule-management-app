@@ -46,10 +46,13 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllSchedules(@RequestParam(value = "updateDate", required = false) String updateDate,
-                                             @RequestParam(value = "managerId", required = false) String managerId) {
+    public ResponseEntity<?> getAllSchedules(
+            @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "updateDate", required = false) String updateDate,
+            @RequestParam(value = "managerId", required = false) Long managerId) {
         try {
-            GetSchedulesRspDto getSchedulesResDto = scheduleService.findAllOrFindByCondition(updateDate, managerId);
+            GetSchedulesRspDto getSchedulesResDto = scheduleService.findAllOrFindByCondition(pageNumber, pageSize, updateDate, managerId);
 
             return new ResponseEntity<>(getSchedulesResDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

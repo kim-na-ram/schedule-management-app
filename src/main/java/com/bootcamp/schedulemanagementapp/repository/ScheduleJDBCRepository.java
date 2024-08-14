@@ -58,8 +58,12 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
     }
 
     @Override
-    public List<Schedule> findAll() {
+    public List<Schedule> findAll(Integer pageNumber, Integer pageSize) {
         String sql = "SELECT schedule_id, contents, m.manager_id as manager_id, name, s.reg_date as reg_date, s.update_date as update_date FROM schedule s JOIN manager m ON s.manager_id = m.manager_id WHERE is_deleted = false ORDER BY update_date DESC";
+
+        if (pageNumber != null && pageSize != null) {
+            sql += " LIMIT " + (pageNumber - 1) * pageSize + ", " + pageSize;
+        }
 
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Schedule.builder()
@@ -73,7 +77,7 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
     }
 
     @Override
-    public List<Schedule> findByUpdateDateAndManagerId(String updateDate, String managerId) {
+    public List<Schedule> findByUpdateDateAndManagerId(Integer pageNumber, Integer pageSize, String updateDate, Long managerId) {
         String sql = "SELECT schedule_id, contents, m.manager_id as manager_id, name, s.reg_date as reg_date, s.update_date as update_date FROM schedule s JOIN manager m ON s.manager_id = m.manager_id WHERE is_deleted = false";
         List<Object> params = new ArrayList<>();
 
@@ -82,12 +86,16 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
             params.add(updateDate);
         }
 
-        if (StringUtils.hasText(managerId)) {
+        if (managerId != null) {
             sql += " AND s.manager_id = ?";
             params.add(managerId);
         }
 
         sql += " ORDER BY update_date DESC";
+
+        if (pageNumber != null && pageSize != null) {
+            sql += " LIMIT " + (pageNumber - 1) * pageSize + ", " + pageSize;
+        }
 
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Schedule.builder()

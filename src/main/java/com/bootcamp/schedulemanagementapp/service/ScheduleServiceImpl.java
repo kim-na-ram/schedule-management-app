@@ -39,16 +39,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public GetSchedulesRspDto findAllOrFindByCondition(String updateDate, String managerId) {
+    public GetSchedulesRspDto findAllOrFindByCondition(Integer pageNumber, Integer pageSize, String updateDate, Long managerId) {
         if(StringUtils.hasText(updateDate)
                 && !updateDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
             throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
         }
 
-        if(!StringUtils.hasText(managerId) && !StringUtils.hasText(updateDate)) {
-            return new GetSchedulesRspDto(scheduleRepository.findAll());
+        if(managerId != null && !StringUtils.hasText(updateDate)) {
+            return new GetSchedulesRspDto(scheduleRepository.findAll(pageNumber, pageSize));
         } else {
-            return new GetSchedulesRspDto(scheduleRepository.findByUpdateDateAndManagerId(updateDate, managerId));
+            return new GetSchedulesRspDto(scheduleRepository.findByUpdateDateAndManagerId(pageNumber, pageSize, updateDate, managerId));
         }
     }
 
