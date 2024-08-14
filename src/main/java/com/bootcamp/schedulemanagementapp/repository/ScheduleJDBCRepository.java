@@ -127,7 +127,14 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
         params.add(schedule.getPassword());
 
         int result = jdbcTemplate.update(sql, params.toArray());
+        return result > 0;
+    }
 
+    @Override
+    public boolean deleteByScheduleIdAndPassword(long scheduleId, String password) {
+        String sql = "UPDATE schedule SET is_deleted = true WHERE schedule_id = ? AND password = ?";
+
+        int result = jdbcTemplate.update(sql, scheduleId, password);
         return result > 0;
     }
 }

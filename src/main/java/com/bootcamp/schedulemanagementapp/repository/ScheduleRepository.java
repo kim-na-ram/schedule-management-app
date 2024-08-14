@@ -12,4 +12,5 @@ public interface ScheduleRepository {
     List<Schedule> findByUpdateDateAndManagerName(String updateDate, String managerName);
     boolean existsByScheduleId(long scheduleId);
     boolean updateByScheduleIdAndPassword(long scheduleId, Schedule schedule);
+    boolean deleteByScheduleIdAndPassword(long scheduleId, String password);
 }

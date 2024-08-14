@@ -57,4 +57,18 @@ public class ScheduleService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
+
+    public void deleteByScheduleIdAndPassword(long scheduleId, DeleteScheduleReqDto deleteScheduleReqDto) {
+        boolean isExistSchedule = scheduleRepository.existsByScheduleId(scheduleId);
+
+        if (!isExistSchedule) {
+            throw new NoSuchElementException("존재하지 않는 일정입니다.");
+        }
+
+        boolean result = scheduleRepository.deleteByScheduleIdAndPassword(scheduleId, deleteScheduleReqDto.getPassword());
+        if(!result) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
 }
