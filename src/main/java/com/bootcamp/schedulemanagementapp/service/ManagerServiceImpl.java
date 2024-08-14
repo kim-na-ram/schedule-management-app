@@ -1,15 +1,15 @@
 package com.bootcamp.schedulemanagementapp.service;
 
+import com.bootcamp.schedulemanagementapp.constants.ResponseCode;
 import com.bootcamp.schedulemanagementapp.dto.GetManagerRspDto;
 import com.bootcamp.schedulemanagementapp.dto.GetManagersRspDto;
 import com.bootcamp.schedulemanagementapp.dto.ModifyManagerReqDto;
 import com.bootcamp.schedulemanagementapp.dto.RegisterManagerReqDto;
+import com.bootcamp.schedulemanagementapp.exception.ApiException;
 import com.bootcamp.schedulemanagementapp.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public GetManagerRspDto findByManagerId(long managerId) {
         return new GetManagerRspDto(managerRepository.findByManagerId(managerId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 담당자입니다.")));
+                .orElseThrow(() -> new ApiException(ResponseCode.NOT_EXIST_MANAGER)));
     }
 
     @Override
@@ -39,19 +39,19 @@ public class ManagerServiceImpl implements ManagerService {
         boolean isExistSchedule = managerRepository.existsByManagerId(managerId);
 
         if (!isExistSchedule) {
-            throw new NoSuchElementException("존재하지 않는 담당자입니다.");
+            throw new ApiException(ResponseCode.NOT_EXIST_MANAGER);
         }
 
         validateEmailFormat(modifyManagerReqDto.getEmail());
 
         boolean result = managerRepository.updateByManagerId(managerId, modifyManagerReqDto.toEntity());
-        if(!result) throw new RuntimeException("담당자 수정에 실패하였습니다.");
+        if(!result) throw new ApiException(ResponseCode.FAIL_MODIFY_MANAGER);
     }
 
     private void validateEmailFormat(String email) {
         if(StringUtils.hasText(email)
                 && !email.matches("^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")) {
-            throw new IllegalArgumentException("잘못된 이메일 형식입니다.");
+            throw new ApiException(ResponseCode.INVALID_EMAIL_FORMAT);
         }
     }
 }

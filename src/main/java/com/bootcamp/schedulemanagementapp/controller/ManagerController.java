@@ -4,13 +4,11 @@ import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-
 import static com.bootcamp.schedulemanagementapp.constants.ManagerApiUrl.*;
+import static com.bootcamp.schedulemanagementapp.constants.ResponseCode.SUCCESS;
 
 @Slf4j
 @RestController
@@ -21,54 +19,25 @@ public class ManagerController {
 
     @PostMapping(REGISTER_MANAGER)
     public ResponseEntity<?> registerManager(@RequestBody RegisterManagerReqDto registerManagerReqDto) {
-        try {
-            managerService.save(registerManagerReqDto);
-
-            return new ResponseEntity<>("정상 처리되었습니다.", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("담당자 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        managerService.save(registerManagerReqDto);
+        return new ResponseEntity<>(SUCCESS.getResponseMessage(), SUCCESS.getHttpStatus());
     }
 
     @GetMapping(MANAGER_ID)
     public ResponseEntity<?> getManager(@PathVariable long managerId) {
-        try {
-            GetManagerRspDto getManagerRspDto = managerService.findByManagerId(managerId);
-
-            return new ResponseEntity<>(getManagerRspDto, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("담당자 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        GetManagerRspDto getManagerRspDto = managerService.findByManagerId(managerId);
+        return new ResponseEntity<>(getManagerRspDto, SUCCESS.getHttpStatus());
     }
 
     @GetMapping
     public ResponseEntity<?> getAllManagers() {
-        try {
-            GetManagersRspDto getManagersRspDto = managerService.findAll();
-
-            return new ResponseEntity<>(getManagersRspDto, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("담당자 목록 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        GetManagersRspDto getManagersRspDto = managerService.findAll();
+        return new ResponseEntity<>(getManagersRspDto, SUCCESS.getHttpStatus());
     }
 
     @PatchMapping(MANAGER_ID)
     public ResponseEntity<?> modifyManager(@PathVariable("managerId") long managerId, @RequestBody ModifyManagerReqDto modifyManagerReqDto) {
-        try {
-            managerService.updateByManagerId(managerId, modifyManagerReqDto);
-
-            return new ResponseEntity<>("정상 처리되었습니다.", HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("담당자 수정에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        managerService.updateByManagerId(managerId, modifyManagerReqDto);
+        return new ResponseEntity<>(SUCCESS.getResponseMessage(), SUCCESS.getHttpStatus());
     }
 }
