@@ -1,7 +1,7 @@
 # 일정 관리 앱 서버
 
 # ERD
-![ERD](https://github.com/user-attachments/assets/c0579f99-9250-4c44-9d24-aed4f6a13aa2)
+<img src = "https://github.com/user-attachments/assets/9dcce10d-df47-405c-a0e5-1cca96d65350" width="70%">
 
 <br>
 
@@ -102,6 +102,7 @@ URL : `GET` `/schedules/{scheduleId}`
 ```
 
 <br>
+
 ## 일정 목록 조회
 URL : `GET` `/schedules` 
 
@@ -124,7 +125,7 @@ URL : `GET` `/schedules`
   | 1 | managerId | Long | O | 담당자 고유번호 |
   | 1 | managerName | String | O | 담당자명 |
   | 1 | regDate | String | O | 작성일 |
-  | 1 | updateDate | String | X | 수정일 |
+  | 1 | updateDate | String | O | 수정일 |
 
 - 응답 코드
 
