@@ -2,7 +2,6 @@ package com.bootcamp.schedulemanagementapp.controller;
 
 import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.service.ScheduleService;
-import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,8 +25,8 @@ public class ScheduleController {
             RegisterScheduleRspDto registerScheduleRspDto = scheduleService.save(registerScheduleReqDto);
 
             return new ResponseEntity<>(registerScheduleRspDto, HttpStatus.OK);
-        } catch (DuplicateRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -48,9 +47,9 @@ public class ScheduleController {
 
     @GetMapping
     public ResponseEntity<?> getAllSchedules(@RequestParam(value = "updateDate", required = false) String updateDate,
-                                             @RequestParam(value = "managerName", required = false) String managerName) {
+                                             @RequestParam(value = "managerId", required = false) String managerId) {
         try {
-            GetSchedulesRspDto getSchedulesResDto = scheduleService.findAllOrFindByCondition(updateDate, managerName);
+            GetSchedulesRspDto getSchedulesResDto = scheduleService.findAllOrFindByCondition(updateDate, managerId);
 
             return new ResponseEntity<>(getSchedulesResDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

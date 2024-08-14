@@ -2,6 +2,7 @@ package com.bootcamp.schedulemanagementapp.service;
 
 import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.entity.Schedule;
+import com.bootcamp.schedulemanagementapp.repository.ManagerRepository;
 import com.bootcamp.schedulemanagementapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,19 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final ManagerRepository managerRepository;
 
     @Override
     public RegisterScheduleRspDto save(RegisterScheduleReqDto registerScheduleReqDto) {
-        Schedule savedSchedule;
+        boolean isExistManager = managerRepository.existsByManagerId(registerScheduleReqDto.getManagerId());
+
+        if (!isExistManager) {
+            throw new NoSuchElementException("존재하지 않는 담당자입니다.");
+        }
+
         try {
-            savedSchedule = scheduleRepository.save(registerScheduleReqDto.toEntity());
-            return new RegisterScheduleRspDto(savedSchedule);
+            Schedule schedule = scheduleRepository.save(registerScheduleReqDto.toEntity());
+            return new RegisterScheduleRspDto(schedule);
         } catch (Exception e) {
             throw new RuntimeException("일정 등록에 실패하였습니다.");
         }
@@ -32,16 +39,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public GetSchedulesRspDto findAllOrFindByCondition(String updateDate, String managerName) {
+    public GetSchedulesRspDto findAllOrFindByCondition(String updateDate, String managerId) {
         if(StringUtils.hasText(updateDate)
                 && !updateDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
             throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
         }
 
-        if(!StringUtils.hasText(managerName) && !StringUtils.hasText(updateDate)) {
+        if(!StringUtils.hasText(managerId) && !StringUtils.hasText(updateDate)) {
             return new GetSchedulesRspDto(scheduleRepository.findAll());
         } else {
-            return new GetSchedulesRspDto(scheduleRepository.findByUpdateDateAndManagerName(updateDate, managerName));
+            return new GetSchedulesRspDto(scheduleRepository.findByUpdateDateAndManagerId(updateDate, managerId));
         }
     }
 

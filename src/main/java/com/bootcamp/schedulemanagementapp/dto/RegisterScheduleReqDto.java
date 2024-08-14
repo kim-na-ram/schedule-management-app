@@ -12,13 +12,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class RegisterScheduleReqDto {
     private String contents;
-    private String managerName;
+    private Long managerId;
     private String password;
 
     public Schedule toEntity() {
         return Schedule.builder()
                 .contents(contents)
-                .managerName(managerName)
+                .managerId(managerId)
                 .password(password)
                 .regDate(new Timestamp(System.currentTimeMillis()))
                 .updateDate(new Timestamp(System.currentTimeMillis()))

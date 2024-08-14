@@ -9,9 +9,9 @@ import static com.bootcamp.schedulemanagementapp.utils.Utils.timeStampToStringDa
 @ToString
 @NoArgsConstructor
 public class RegisterScheduleRspDto {
-    private Long scheduleId;
+    private long scheduleId;
     private String contents;
-    private String managerName;
+    private long managerId;
     private String regDate;
     private String updateDate;
 
@@ -19,7 +19,7 @@ public class RegisterScheduleRspDto {
     public RegisterScheduleRspDto(Schedule schedule) {
         this.scheduleId = schedule.getScheduleId();
         this.contents = schedule.getContents();
-        this.managerName = schedule.getManagerName();
+        this.managerId = schedule.getManagerId();
         this.regDate = timeStampToStringDate(schedule.getRegDate());
         this.updateDate = timeStampToStringDate(schedule.getUpdateDate());
     }
