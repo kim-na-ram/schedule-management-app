@@ -2,6 +2,7 @@ package com.bootcamp.schedulemanagementapp.controller;
 
 import com.bootcamp.schedulemanagementapp.dto.*;
 import com.bootcamp.schedulemanagementapp.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping(REGISTER_SCHEDULE)
-    public ResponseEntity<?> registerSchedule(@RequestBody RegisterScheduleReqDto registerScheduleReqDto) {
+    public ResponseEntity<?> registerSchedule(@Valid @RequestBody RegisterScheduleReqDto registerScheduleReqDto) {
         RegisterScheduleRspDto registerScheduleRspDto = scheduleService.save(registerScheduleReqDto);
         return new ResponseEntity<>(registerScheduleRspDto, SUCCESS.getHttpStatus());
     }
@@ -40,13 +41,13 @@ public class ScheduleController {
     }
 
     @PatchMapping(SCHEDULE_ID)
-    public ResponseEntity<?> modifySchedule(@PathVariable("scheduleId") long scheduleId, @RequestBody ModifyScheduleReqDto modifyScheduleReqDto) {
+    public ResponseEntity<?> modifySchedule(@PathVariable("scheduleId") long scheduleId, @Valid @RequestBody ModifyScheduleReqDto modifyScheduleReqDto) {
         ModifyScheduleRspDto modifyScheduleRspDto = scheduleService.updateByScheduleIdAndPassword(scheduleId, modifyScheduleReqDto);
         return new ResponseEntity<>(modifyScheduleRspDto, SUCCESS.getHttpStatus());
     }
 
     @DeleteMapping(SCHEDULE_ID)
-    public ResponseEntity<?> deleteSchedule(@PathVariable("scheduleId") long scheduleId, @RequestBody DeleteScheduleReqDto deleteScheduleReqDto) {
+    public ResponseEntity<?> deleteSchedule(@PathVariable("scheduleId") long scheduleId, @Valid @RequestBody DeleteScheduleReqDto deleteScheduleReqDto) {
         scheduleService.deleteByScheduleIdAndPassword(scheduleId, deleteScheduleReqDto);
         return new ResponseEntity<>(SUCCESS.getResponseMessage(), SUCCESS.getHttpStatus());
     }

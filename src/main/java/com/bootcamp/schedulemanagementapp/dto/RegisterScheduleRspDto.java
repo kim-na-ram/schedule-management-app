@@ -9,9 +9,9 @@ import static com.bootcamp.schedulemanagementapp.utils.Utils.timeStampToStringDa
 @ToString
 @NoArgsConstructor
 public class RegisterScheduleRspDto {
-    private long scheduleId;
+    private Long scheduleId;
     private String contents;
-    private long managerId;
+    private Long managerId;
     private String regDate;
     private String updateDate;
 

@@ -9,7 +9,6 @@ import com.bootcamp.schedulemanagementapp.exception.ApiException;
 import com.bootcamp.schedulemanagementapp.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +17,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void save(RegisterManagerReqDto registerManagerReqDto) {
-        validateEmailFormat(registerManagerReqDto.getEmail());
-
         managerRepository.save(registerManagerReqDto.toEntity());
     }
 
@@ -42,16 +39,7 @@ public class ManagerServiceImpl implements ManagerService {
             throw new ApiException(ResponseCode.NOT_EXIST_MANAGER);
         }
 
-        validateEmailFormat(modifyManagerReqDto.getEmail());
-
         boolean result = managerRepository.updateByManagerId(managerId, modifyManagerReqDto.toEntity());
         if(!result) throw new ApiException(ResponseCode.FAIL_MODIFY_MANAGER);
-    }
-
-    private void validateEmailFormat(String email) {
-        if(StringUtils.hasText(email)
-                && !email.matches("^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")) {
-            throw new ApiException(ResponseCode.INVALID_EMAIL_FORMAT);
-        }
     }
 }

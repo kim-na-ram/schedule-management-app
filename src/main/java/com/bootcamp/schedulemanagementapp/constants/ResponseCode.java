@@ -14,7 +14,6 @@ public enum ResponseCode {
     MISMATCH_PASSWORD("비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
     FAIL_MODIFY_SCHEDULE("일정 수정에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     FAIL_DELETE_SCHEDULE("일정 삭제에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_EMAIL_FORMAT("잘못된 이메일 형식입니다.", HttpStatus.BAD_REQUEST),
     FAIL_REGISTER_MANAGER("담당자 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     NOT_EXIST_MANAGER("존재하지 않는 담당자입니다.", HttpStatus.NOT_FOUND),
     FAIL_GET_MANAGER("담당자 조회에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),

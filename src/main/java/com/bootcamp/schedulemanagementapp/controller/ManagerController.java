@@ -1,7 +1,11 @@
 package com.bootcamp.schedulemanagementapp.controller;
 
-import com.bootcamp.schedulemanagementapp.dto.*;
+import com.bootcamp.schedulemanagementapp.dto.GetManagerRspDto;
+import com.bootcamp.schedulemanagementapp.dto.GetManagersRspDto;
+import com.bootcamp.schedulemanagementapp.dto.ModifyManagerReqDto;
+import com.bootcamp.schedulemanagementapp.dto.RegisterManagerReqDto;
 import com.bootcamp.schedulemanagementapp.service.ManagerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +22,7 @@ public class ManagerController {
     private final ManagerService managerService;
 
     @PostMapping(REGISTER_MANAGER)
-    public ResponseEntity<?> registerManager(@RequestBody RegisterManagerReqDto registerManagerReqDto) {
+    public ResponseEntity<?> registerManager(@Valid @RequestBody RegisterManagerReqDto registerManagerReqDto) {
         managerService.save(registerManagerReqDto);
         return new ResponseEntity<>(SUCCESS.getResponseMessage(), SUCCESS.getHttpStatus());
     }
@@ -36,7 +40,7 @@ public class ManagerController {
     }
 
     @PatchMapping(MANAGER_ID)
-    public ResponseEntity<?> modifyManager(@PathVariable("managerId") long managerId, @RequestBody ModifyManagerReqDto modifyManagerReqDto) {
+    public ResponseEntity<?> modifyManager(@PathVariable("managerId") long managerId, @Valid @RequestBody ModifyManagerReqDto modifyManagerReqDto) {
         managerService.updateByManagerId(managerId, modifyManagerReqDto);
         return new ResponseEntity<>(SUCCESS.getResponseMessage(), SUCCESS.getHttpStatus());
     }

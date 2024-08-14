@@ -1,7 +1,11 @@
 package com.bootcamp.schedulemanagementapp.dto;
 
 import com.bootcamp.schedulemanagementapp.entity.Manager;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -11,6 +15,7 @@ import java.sql.Timestamp;
 public class ModifyManagerReqDto {
     private String name;
     @Getter
+    @Email(message = "잘못된 이메일 형식입니다.")
     private String email;
 
     public Manager toEntity() {
