@@ -25,7 +25,7 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("contents", schedule.getContents());
-        parameters.put("manager_name", schedule.getManagerName());
+        parameters.put("manager_id", schedule.getManagerId());
         parameters.put("password", schedule.getPassword());
         parameters.put("reg_date", schedule.getRegDate());
         parameters.put("update_date", schedule.getUpdateDate());
@@ -38,14 +38,15 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
 
     @Override
     public Optional<Schedule> findByScheduleId(long scheduleId) {
-        String sql = "SELECT schedule_id, contents, manager_name, reg_date, update_date FROM schedule WHERE schedule_id = ? AND is_deleted = false";
+        String sql = "SELECT schedule_id, contents, m.manager_id as manager_id, name, s.reg_date as reg_date, s.update_date as update_date FROM schedule s JOIN manager m ON s.manager_id = m.manager_id WHERE schedule_id = ? AND is_deleted = false";
 
         try {
             Schedule result = jdbcTemplate.queryForObject(sql,
                     (rs, rowNum) -> Schedule.builder()
                             .scheduleId(rs.getLong("schedule_id"))
                             .contents(rs.getString("contents"))
-                            .managerName(rs.getString("manager_name"))
+                            .managerId(rs.getLong("manager_id"))
+                            .managerName(rs.getString("name"))
                             .regDate(rs.getTimestamp("reg_date"))
                             .updateDate(rs.getTimestamp("update_date"))
                             .build(), scheduleId);
@@ -57,41 +58,51 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
     }
 
     @Override
-    public List<Schedule> findAll() {
-        String sql = "SELECT schedule_id, contents, manager_name, reg_date, update_date FROM schedule WHERE is_deleted = false ORDER BY update_date DESC";
+    public List<Schedule> findAll(Integer pageNumber, Integer pageSize) {
+        String sql = "SELECT schedule_id, contents, m.manager_id as manager_id, name, s.reg_date as reg_date, s.update_date as update_date FROM schedule s JOIN manager m ON s.manager_id = m.manager_id WHERE is_deleted = false ORDER BY update_date DESC";
+
+        if (pageNumber != null && pageSize != null) {
+            sql += " LIMIT " + (pageNumber - 1) * pageSize + ", " + pageSize;
+        }
 
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Schedule.builder()
                         .scheduleId(rs.getLong("schedule_id"))
                         .contents(rs.getString("contents"))
-                        .managerName(rs.getString("manager_name"))
+                        .managerId(rs.getLong("manager_id"))
+                        .managerName(rs.getString("name"))
                         .regDate(rs.getTimestamp("reg_date"))
                         .updateDate(rs.getTimestamp("update_date"))
                         .build());
     }
 
     @Override
-    public List<Schedule> findByUpdateDateAndManagerName(String updateDate, String managerName) {
-        String sql = "SELECT schedule_id, contents, manager_name, reg_date, update_date FROM schedule WHERE is_deleted = false";
+    public List<Schedule> findByUpdateDateAndManagerId(Integer pageNumber, Integer pageSize, String updateDate, Long managerId) {
+        String sql = "SELECT schedule_id, contents, m.manager_id as manager_id, name, s.reg_date as reg_date, s.update_date as update_date FROM schedule s JOIN manager m ON s.manager_id = m.manager_id WHERE is_deleted = false";
         List<Object> params = new ArrayList<>();
 
         if (StringUtils.hasText(updateDate)) {
-            sql += " AND DATE_FORMAT(update_date, '%Y-%m-%d') = ?";
+            sql += " AND DATE_FORMAT(s.update_date, '%Y-%m-%d') = ?";
             params.add(updateDate);
         }
 
-        if (StringUtils.hasText(managerName)) {
-            sql += " AND manager_name LIKE ?";
-            params.add(managerName);
+        if (managerId != null) {
+            sql += " AND s.manager_id = ?";
+            params.add(managerId);
         }
 
         sql += " ORDER BY update_date DESC";
+
+        if (pageNumber != null && pageSize != null) {
+            sql += " LIMIT " + (pageNumber - 1) * pageSize + ", " + pageSize;
+        }
 
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Schedule.builder()
                         .scheduleId(rs.getLong("schedule_id"))
                         .contents(rs.getString("contents"))
-                        .managerName(rs.getString("manager_name"))
+                        .managerId(rs.getLong("manager_id"))
+                        .managerName(rs.getString("name"))
                         .regDate(rs.getTimestamp("reg_date"))
                         .updateDate(rs.getTimestamp("update_date"))
                         .build(), params.toArray());
@@ -117,9 +128,9 @@ public class ScheduleJDBCRepository implements ScheduleRepository {
             params.add(schedule.getContents());
         }
 
-        if (StringUtils.hasText(schedule.getManagerName())) {
-            sql += ", manager_name = ?";
-            params.add(schedule.getManagerName());
+        if (schedule.getManagerId() != null) {
+            sql += ", manager_id = ?";
+            params.add(schedule.getManagerId());
         }
 
         sql += " WHERE schedule_id = ? AND password = ? AND is_deleted = false";
